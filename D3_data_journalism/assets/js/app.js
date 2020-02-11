@@ -48,7 +48,8 @@ d3.csv("assets/data/data.csv").then(function(data){
 
     chart.append("g")
         .call(leftAxis);
-    
+
+
     //Creating circles
     var circles = chart.selectAll("circle")
     .data(data)
@@ -58,7 +59,21 @@ d3.csv("assets/data/data.csv").then(function(data){
     .attr("cy", d => yLinearScale(d.healthcare))
     .attr("r", "15")
     .attr("fill", "blue")
-    .attr("opacity", ".5");
+    .attr("opacity", ".25");
+
+    //Adding text to circles
+    chart
+    .append("g")
+    .selectAll("text")
+    .data(data)
+    .enter()
+    .append("text")
+    .text(function(w){return w.abbr})
+    .attr("x", d => xLinearScale(d.poverty))
+    .attr("y", d => yLinearScale(d.healthcare))
+    .attr("text-anchor", 'middle')
+    .attr("font-size", "12px")
+    .attr("fill", "white");
 
     // Create axes labels
     var labels = chart.append("g")
@@ -68,7 +83,8 @@ d3.csv("assets/data/data.csv").then(function(data){
         .attr("x", 0)
         .attr("y", 20)
         .classed("active", true)
-        .text("In Poverty(%)");
+        .text("In Poverty(%)")
+        .attr("fill", "blue");
 
 
     // append y axis
@@ -78,11 +94,13 @@ d3.csv("assets/data/data.csv").then(function(data){
         .attr("x", 0 - (height / 2))
         .attr("dy", "1em")
         .classed("active", true)
-        .text("Lacks Health Care(%)");
-
+        .text("Lacks Health Care(%)")
+        .attr("fill", "blue");
+    
+        
     //Creating Tooltip
     var toolTip = d3.tip()
-      .attr("class", "tooltip")
+      .attr("class", "d3-tip")
       .offset([80, -60])
       .html(function(d) {
         return (`State: ${d.state}<br>Poverty: ${d.poverty}<br>Health Care: ${d.healthcare}`);
@@ -90,7 +108,7 @@ d3.csv("assets/data/data.csv").then(function(data){
 
     chart.call(toolTip);
 
-    circles.on("click", function(data) {
+    circles.on("mouseover", function(data) {
       toolTip.show(data, this);
     })
       // onmouseout event
