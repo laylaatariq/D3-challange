@@ -51,7 +51,9 @@ d3.csv("assets/data/data.csv").then(function(data){
 
 
     //Creating circles
-    var circles = chart.selectAll("circle")
+    var circles = chart
+    .append("g")
+    .selectAll("circle")
     .data(data)
     .enter()
     .append("circle")
@@ -60,6 +62,7 @@ d3.csv("assets/data/data.csv").then(function(data){
     .attr("r", "15")
     .attr("fill", "blue")
     .attr("opacity", ".25");
+
 
     //Adding text to circles
     chart
@@ -106,14 +109,28 @@ d3.csv("assets/data/data.csv").then(function(data){
         return (`State: ${d.state}<br>Poverty: ${d.poverty}<br>Health Care: ${d.healthcare}`);
       });
 
+
     chart.call(toolTip);
 
     circles.on("mouseover", function(data) {
       toolTip.show(data, this);
     })
+      .on("click", function(){
+        d3.select(this)
+          .transition()
+          .duration(1000)
+          .attr("r", 20)
+          .attr("fill", "red");
+    })
       // onmouseout event
       .on("mouseout", function(data, index) {
         toolTip.hide(data);
+        d3.select(this)
+          .transition()
+          .duration(100)
+          .attr("r", "15")
+          .attr("fill", "blue")
+          .attr("opacity", ".25");
       });
 
 }).catch(function(error){
